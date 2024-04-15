@@ -52,15 +52,14 @@ if "chat_engine" not in st.session_state.keys():
         project_title = data["title"]
 
 
-        try:
-            # make dir of project_id
-            os.mkdir(f"data/{project_id}")
-            url = file_url
-            r = requests.get(url, stream = True)
-            with open(f"data/{project_id}/{project_id}.pdf","wb") as pdf:
+        
+        os.mkdir(f"data/{project_id}")
+        url = file_url
+        r = requests.get(url, stream = True)
+        with open(f"data/{project_id}/{project_id}.pdf","wb") as pdf:
                 shutil.copyfileobj(r.raw, pdf)
-        except Exception as e:
-            print(e)
+        # except Exception as e:
+        #     print(e)
 
         reader = SimpleDirectoryReader(f"data/{project_id}")
         documents = reader.load_data()
