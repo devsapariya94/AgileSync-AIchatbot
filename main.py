@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit as st
 from llama_index.llms.gemini import Gemini
 from llama_index.embeddings.gemini import GeminiEmbedding
 from llama_index.core.readers import SimpleDirectoryReader
