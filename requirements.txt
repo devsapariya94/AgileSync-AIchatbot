@@ -1,8 +1,1 @@
-llama-index
-llama_index.llms.gemini
-llama_index.embeddings.gemini
-langchain
-langchain_google_genai
-pymongo
-requests
 streamlit
