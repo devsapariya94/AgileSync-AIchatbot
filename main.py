@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit as st
 from llama_index.llms.gemini import Gemini
 from llama_index.embeddings.gemini import GeminiEmbedding
 from llama_index.core.readers import SimpleDirectoryReader
@@ -19,17 +20,21 @@ import os
 import requests
 import shutil
 
+
+st.set_page_config(page_title=f"Chat with Project", page_icon="📚")
+
 if "id" not in st.query_params:
     st.error("Url Is Not Correct. Please Provide the Correct Url")
     st.markdown('''
     # 🚨❌⚠️🚨
                 
-
     ## *Oops! Looks like you've taken a wrong turn. Let's get you back on track!*
                 
     #### **you can visit as [@homepage](https://agilesync.co) for more information.**
 ''')
     st.stop()
+
+
 
 if "chat_engine" not in st.session_state.keys():
     with st.spinner(text="Loading and indexing the Documents – hang tight! This should take 1-2 minutes."):
@@ -38,28 +43,29 @@ if "chat_engine" not in st.session_state.keys():
         embed_model = GeminiEmbedding(api_key=st.secrets["GOOGLE_GEMINI_AI"])  # Fix typo
         service_context = ServiceContext.from_defaults(llm=llm, embed_model=embed_model)  # Fix variable name
         global data
-       
+
 
         project_id = st.query_params["id"]
-        
+
         client = MongoClient(st.secrets["MONGO_URI"])
         db = client[st.secrets["DB_NAME"]]
         collection = db["projects"]
         data = collection.find_one({"project_id": int(project_id)})
         file_url = data["documents"]
-        
+
         global project_title
         project_title = data["title"]
 
 
-        
-        os.mkdir(f"data/{project_id}")
-        url = file_url
-        r = requests.get(url, stream = True)
-        with open(f"data/{project_id}/{project_id}.pdf","wb") as pdf:
+        try:
+            # make dir of project_id
+            os.mkdir(f"data/{project_id}")
+            url = file_url
+            r = requests.get(url, stream = True)
+            with open(f"data/{project_id}/{project_id}.pdf","wb") as pdf:
                 shutil.copyfileobj(r.raw, pdf)
-        # except Exception as e:
-        #     print(e)
+        except:
+            pass
 
         reader = SimpleDirectoryReader(f"data/{project_id}")
         documents = reader.load_data()
@@ -73,7 +79,6 @@ if "chat_engine" not in st.session_state.keys():
 
 
 
-st.set_page_config(page_title=f"Chat with Project: {project_title}", page_icon="📚")
 
 
 st.title(f"Chat With The Project titled: {project_title}")
@@ -95,7 +100,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] != "assis
     with st.spinner("Thinking..."):
         response = st.session_state.chat_engine.chat(prompt)
         response = response.response
-        
+
         template = ChatPromptTemplate.from_messages([
                 ("system", "Act as the AI Bot Which Give the Answer of the Question asked by the User. Using the Context which will be provided. Do not give the answer which is not relevant to the context. If the question is irrelevant with respect to the context then, kindly suggest to contact developer. Do not give incorrect answer. Context:  `{response}`"),
                 ("human", st.session_state.messages[-1]["content"]),
