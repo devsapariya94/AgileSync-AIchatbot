@@ -24,17 +24,16 @@ import shutil
 st.set_page_config(page_title=f"Chat with Project", page_icon="📚")
 
 if "id" not in st.query_params:
-    st.error("Url Is Not Correct. Please Provide the Correct Url")
     st.markdown('''
-    # 🚨❌⚠️🚨
+                # 🚨❌⚠️🚨 Look like you Find New World
                 
-    ## *Oops! Looks like you've taken a wrong turn. Let's get you back on track!*
-                
-    #### **you can visit as [@homepage](https://agilesync.co) for more information.**
-''')
+                # No Problem!!
+    
+                ## To Chat with our AI Bot you can click 👉[Here](https://chat.agilesync.co/?id=1)
+                ''')
+    st.error("Url Is Not Correct. Please Provide the Correct Url")
+    
     st.stop()
-
-
 
 if "chat_engine" not in st.session_state.keys():
     with st.spinner(text="Loading and indexing the Documents – hang tight! This should take 1-2 minutes."):
@@ -51,6 +50,19 @@ if "chat_engine" not in st.session_state.keys():
         db = client[st.secrets["DB_NAME"]]
         collection = db["projects"]
         data = collection.find_one({"project_id": int(project_id)})
+        
+        if not data:
+            st.error("Url Is Not Correct. Please Provide the Correct Url")
+            st.markdown('''
+            # 🚨❌⚠️🚨
+                        
+            ## *Oops! Looks like you've taken a wrong turn. Let's get you back on track!*
+                        
+            #### **you can visit as @[homepage](https://agilesync.co) for more information.**
+        ''')
+            
+
+            st.stop()
         file_url = data["documents"]
 
         global project_title
