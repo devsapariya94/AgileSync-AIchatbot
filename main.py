@@ -71,6 +71,8 @@ if "chat_engine" not in st.session_state.keys():
         documents = reader.load_data()
 
         index = VectorStoreIndex.from_documents(documents=documents, service_context=service_context)
+    st.session_state.title = project_title
+    st.session_state.owner = data["owner"]
     st.session_state.chat_engine = index.as_chat_engine(chat_mode="context", verbose=True)
     llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=st.secrets["GOOGLE_GEMINI_AI"], temperature=0.1)
     st.session_state.langchain_chat_engine = ConversationChain(llm=llm, verbose=True, memory=ConversationBufferMemory())
@@ -79,10 +81,9 @@ if "chat_engine" not in st.session_state.keys():
 
 
 
+st.title(f"Chat With The Project {st.session_state.title}")
 
-
-st.title(f"Chat With The Project titled: {project_title}")
-
+st.info(f"For more information about the project, contact @ {st.session_state.owner}")
 if "messages" not in st.session_state.keys():
     st.session_state.messages = [
         {"role": "assistant", "content": "Ask me questions ..."}
