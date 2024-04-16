@@ -29,8 +29,9 @@ if "id" not in st.query_params:
                 
                 # No Problem!!
     
-                ## To Chat with our AI Bot you can click 👉[Here](https://chat.agilesync.co/?id=1)
-                ''')
+                ## To Chat with our AI Bot you can click 👉 <a href="https://chat.agilesync.co/?id=1" target="_self">Here!</a>
+                ''', unsafe_allow_html=True)
+    
     st.error("Url Is Not Correct. Please Provide the Correct Url")
     
     st.stop()
